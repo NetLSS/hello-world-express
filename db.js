@@ -1,23 +1,20 @@
 // db.js
 require('dotenv').config();
+const { Sequelize } = require('sequelize');
 
-const mysql = require('mysql2');
-
-// 데이터베이스 연결 설정
-const connection = mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME
+// Sequelize 인스턴스 생성
+const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
+  host: process.env.DB_HOST,
+  dialect: 'mysql'
 });
 
-// 연결 확인
-connection.connect((err) => {
-  if (err) {
-    console.error('데이터베이스 연결 실패: ', err);
-  } else {
+// 연결 테스트
+sequelize.authenticate()
+  .then(() => {
     console.log('데이터베이스 연결 성공');
-  }
-});
+  })
+  .catch(err => {
+    console.error('데이터베이스 연결 실패:', err);
+  });
 
-module.exports = connection;
+module.exports = sequelize;

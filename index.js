@@ -2,16 +2,15 @@
 const express = require('express');
 const app = express();
 const port = 3000;
-const db = require('./db'); // 데이터베이스 연결 불러오기
+const User = require('./models/User');
 
-app.get('/', (req, res) => {
-  db.query('SELECT * FROM users', (err, results) => {
-    if (err) {
-      res.status(500).send('쿼리 실패');
-    } else {
-      res.send(results);
-    }
-  });
+app.get('/', async (req, res) => {
+  try {
+    const users = await User.findAll(); // 모든 사용자 조회
+    res.send(users);
+  } catch (err) {
+    res.status(500).send('데이터 조회 실패');
+  }
 });
 
 app.listen(port, () => {
